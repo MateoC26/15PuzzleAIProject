@@ -15,7 +15,7 @@ Actions:
 8. Down-Left
 Heuristic: Sum of Chessboard Distances
 
-n: Initial State
+n: Initial State\n
 m: Goal State
 d: Depth of solution
 N: Number of nodes generated
