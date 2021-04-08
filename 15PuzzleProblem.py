@@ -1,16 +1,21 @@
 from queue import PriorityQueue
 import copy
+import sys
+
 
 # state: 2D array (str)
 # parent: Node
 # action: int representing action (1-8)
 # path_cost: Cost from root to node n (int)
 class Node:
+    #Basic attributes of every node in the tree
     def __init__(self, state, parent=None, action=None, path_cost=0):
         self.state = state
         self.parent = parent
         self.action = action
         self.path_cost = path_cost
+
+    #Shortcut for less than
 
     def __lt__(self, other):
         self_mag = sumOfChessboardDistances(self.state) + self.path_cost
@@ -40,6 +45,8 @@ class Problem:
                 if(new_state[i][j] == '0'):
                     blank_row = i
                     blank_col = j
+
+        # Define each action depending on where the blank space is gonna move to
 
         if(action == 1):
             if(blank_col == 0):
@@ -114,12 +121,10 @@ def bestFirstSearch(prob):
         for child in expand(prob, node):
             curr_state = child.state
 
-            # Is num_nodes updated here
-            num_nodes += 1
 
             if(str(curr_state) not in reached or child.path_cost < reached[str(curr_state)].path_cost):
-                # Or is num_nodes updated here
-                #num_nodes += 1
+                # num_nodes updated here
+                num_nodes += 1
                 reached[str(curr_state)] = child
                 frontier.put(child)
 
@@ -163,19 +168,39 @@ def sumOfChessboardDistances(curr_state):
 
 # ----------------------------------------------- Main ------------------------------------------------------------
 
-# Ask for file name
-print("Please enter the input file name (ex. fileName.txt)")
-file_name = input();
-
-input_file = open(file_name)
 
 initial = []
 goal = []
+
+
+#Ask to initialize the file until found
+
+while True:
+    print("\nEnter the name of the input, ensuring that you type .txt afterwards.\n\nOutput will be written in sampleoutput.txt. Please check your directory. ")
+    file_name = input();
+    try:
+        input_file = open(file_name)
+        if input_file:
+            break
+    except IOError:
+        print ("There is no such a file, please try again")
 
 input_str = input_file.read()
 
 # Splits with each new line
 split_input = input_str.split('\n')
+
+#Clean the output file
+
+file = open("sampleoutput.txt","r+")
+file.truncate(0)
+file.close()
+
+#Open it for writing
+
+sys.stdout = open("sampleoutput.txt", "w")
+
+
 switch = False
 
 # Splits with each space
@@ -257,21 +282,21 @@ for f in fs:
 
 print()
 
+
+
+input_file.close()
+sys.stdout.close()
+
 # Checks if the solution node has the goal state
 #for row in range(0, 4, 1):
 #    for col in range(0, 4, 1):
-#        (sol[0].state[row][col], end=" ")
-#    print()
-#print()
+#        print(sol[0].state[row][col], end=" ")
 
-input_file.close()
+
+
+
 
 #--------------------------------------------TO DO---------------------------------------
-# Where to update number of nodes in bestFirstSearch
-# Is it possible to get depth inside of bestFirstSearch
-# Get it to output to a text file
-# Get 3 output txt files for input files
+# Is it possible to get depth inside of bestFirstSearch unsure
 # Clean up the file (Change some names for clarity, cut down unnecessary code, add comments, etc.)
 # Create PDF w/ instructions
-# Could make the prompt for filename better (ask to re-enter if file doesn't exist)
-# Maybe more...
