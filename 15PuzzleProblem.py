@@ -8,32 +8,35 @@ import sys
 # action: int representing action (1-8)
 # path_cost: Cost from root to node n (int)
 class Node:
-    #Basic attributes of every node in the tree
+    # Node Constructor
     def __init__(self, state, parent=None, action=None, path_cost=0):
         self.state = state
         self.parent = parent
         self.action = action
         self.path_cost = path_cost
 
-    #Shortcut for less than
-
+    # Overwrites Less Than Operator (Used for priority queue)
     def __lt__(self, other):
         self_mag = sumOfChessboardDistances(self.state) + self.path_cost
         other_mag = sumOfChessboardDistances(other.state) + other.path_cost
         return self_mag < other_mag
 
 
+# initial: Initial State
+# goal: Goal State
+# actions: All possible actions (int array)
+# action_cost: Action cost for all actions (always 1 for this problem)
 class Problem:
     def __init__(self, initial, goal, actions):
         self.initial = initial
         self.goal = goal
         self.actions = actions
+        self.action_cost = 1
 
     def isGoal(self, state):
         return state == goal
 
     # Returns new_state resulting from doing action on state
-    # Could probably cut down
     def result(self, state, action):
         new_state = copy.deepcopy(state)
 
@@ -47,7 +50,6 @@ class Problem:
                     blank_col = j
 
         # Define each action depending on where the blank space is gonna move to
-
         if(action == 1):
             if(blank_col == 0):
                 return new_state
@@ -91,17 +93,13 @@ class Problem:
 
         return new_state
 
-    # ActionCost will always be 1 (just for comprehension in Expand function - can delete when done)
-    def actionCost(self, state, action, new_state):
-        return 1
-
 
 # A* Algorithm
 def bestFirstSearch(prob):
     node = Node(prob.initial)
 
     # Priority Queue
-    # f(n) = h(n) + g(n)
+    # f(n) = h(n) + g(n) (see __lt__ in Node)
     frontier = PriorityQueue()
     frontier.put(node)
 
@@ -137,13 +135,12 @@ def expand(problem, node):
     ret = []
     for action in problem.actions:
         new_state = problem.result(curr_state, action)
-        cost = node.path_cost + problem.actionCost(curr_state, action, new_state)
-        ret.append(Node(new_state, node, action,cost))
+        cost = node.path_cost + problem.action_cost
+        ret.append(Node(new_state, node, action, cost))
         yield Node(new_state, node, action, cost)
 
 
-# Could cut down (or one line)
-# Uses dictionary, could use a goal state parameter instead
+# Calculates the Chessboard Distance of a single tile
 def chessboardDistance(tile, row, col):
     goal_row = goal_dict[tile][0]
     goal_col = goal_dict[tile][1]
@@ -154,7 +151,7 @@ def chessboardDistance(tile, row, col):
     return max(row_dist, col_dist)
 
 
-# Heuristic Function
+# Heuristic Function - Used to order frontier
 def sumOfChessboardDistances(curr_state):
     sum = 0
 
@@ -166,14 +163,12 @@ def sumOfChessboardDistances(curr_state):
 
     return sum
 
-# ----------------------------------------------- Main ------------------------------------------------------------
-
-
+# ------------------------ Main --------------------------
 initial = []
 goal = []
 
 
-#Ask to initialize the file until found
+# Ask to initialize the file until found
 
 while True:
     print("\nEnter the name of the input, ensuring that you type .txt afterwards.\n\nOutput will be written in sampleoutput.txt. Please check your directory. ")
@@ -190,21 +185,19 @@ input_str = input_file.read()
 # Splits with each new line
 split_input = input_str.split('\n')
 
-#Clean the output file
-
+# Clean the output file
 file = open("sampleoutput.txt","r+")
 file.truncate(0)
 file.close()
 
-#Open it for writing
-
+# Open output file for writing
 sys.stdout = open("sampleoutput.txt", "w")
 
 
 switch = False
 
 # Splits with each space
-# Appends to initial if swtich = False
+# Appends to initial if switch = False
 # else appends to goal
 for arr in split_input:
     if arr == '':
@@ -245,7 +238,6 @@ while True:
 
 depth = len(acts)
 
-print("---------------OUTPUT-----------------")
 # Prints the initial and goal states
 for row in range(0, 4, 1):
     for col in range(0, 4, 1):
@@ -260,9 +252,6 @@ for row in range(0, 4, 1):
     print()
 
 print()
-
-# Can just print this instead of initial and goal separately
-# print(input_str)
 
 # d
 print(depth)
@@ -283,20 +272,5 @@ for f in fs:
 print()
 
 
-
 input_file.close()
 sys.stdout.close()
-
-# Checks if the solution node has the goal state
-#for row in range(0, 4, 1):
-#    for col in range(0, 4, 1):
-#        print(sol[0].state[row][col], end=" ")
-
-
-
-
-
-#--------------------------------------------TO DO---------------------------------------
-# Is it possible to get depth inside of bestFirstSearch unsure
-# Clean up the file (Change some names for clarity, cut down unnecessary code, add comments, etc.)
-# Create PDF w/ instructions
