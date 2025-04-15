@@ -1,4 +1,4 @@
-# 15PuzzleAIProject
+# 15 Puzzle AI Project
 Using Sum of Chessboard Distance and A* search to provide a solution to a 15 puzzle (https://en.wikipedia.org/wiki/15_puzzle) given the Initial and Goal states.
 
 A* Search
